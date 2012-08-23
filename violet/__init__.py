@@ -64,6 +64,12 @@ class is_type(Composable):
             for x in value:
                 accum.add(validator(x))
             return accum
+        elif isinstance(self.type, dict):
+            accum = {}
+            for key, subtype in self.type.iteritems():
+                subvalidator = _ensure_validator(subtype)
+                accum[key] = subvalidator(value[key])
+            return accum
         # constant test
         elif self.type == value:
             return value
