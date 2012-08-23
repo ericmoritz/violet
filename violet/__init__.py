@@ -41,7 +41,9 @@ class is_type(Composable):
     def __call__(self, value):
         if isinstance(self.type, type) and isinstance(value, self.type):
             return value
-
+        # constant test
+        elif self.type == value:
+            return value
         # container check
         elif isinstance(self.type, list):
             # assert that the value is a list
@@ -70,9 +72,6 @@ class is_type(Composable):
                 subvalidator = _ensure_validator(subtype)
                 accum[key] = subvalidator(value[key])
             return accum
-        # constant test
-        elif self.type == value:
-            return value
         else:
             raise TypeError("%r is not of type %s" % (value, type))
 
