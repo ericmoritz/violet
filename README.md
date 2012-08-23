@@ -86,7 +86,7 @@ Containers of types or directives:
 Simply converts the value as another:
 
     validator = cast(int)
-    assert 10 = validator("10")
+    assert 10 == validator("10")
 
 ### passes(predicate)
 
@@ -94,7 +94,7 @@ Raises an `AssertionError` if the predicate returns False,
 passes the value through if the predicate returns True:
 
     validator = passes(lambda x: x > 10)
-    assert 11 = validator(11)
+    assert 11 == validator(11)
 
 ## Not implemented
 
