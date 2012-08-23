@@ -43,6 +43,33 @@ class TestIsType(unittest.TestCase):
         self.assertRaises(ValueError, validator, {"foo"})
         self.assertRaises(AssertionError, validator, {1})
 
+    def test_dict(self):
+        validator = is_type({
+                "name": str,
+                "age": int,
+                })
+        self.assertEqual({"name": "Eric", "age": 32},
+                         validator({"name": "Eric",
+                                    "age": 32}))
+    def test_complex(self):
+        validator = is_type(
+            [
+                {
+                    "name": is_type(str) & passes(len),
+                    "age": cast(int) & passes(lambda x: 18 <= x <= 99),
+                    "sex": cast(str.lower) & passes(lambda s: s in ["male", "female"])
+                    }
+                ])
+            
+        data = [{'name': 'Sue', 'age': '28', 'sex': 'FEMALE'},
+                {'name': 'Sam', 'age': '42', 'sex': 'Male'},
+                {'name': 'Sacha', 'age': '20', 'sex': 'Male'}]
+
+        self.assertEqual(
+            [{'name': 'Sue', 'age': 28, 'sex': 'female'},
+             {'name': 'Sam', 'age': 42, 'sex': 'male'},
+             {'name': 'Sacha', 'age': 20, 'sex': 'male'}],
+            validator(data))
 
 
 class TestPasses(unittest.TestCase):
@@ -72,26 +99,6 @@ class TestOR(unittest.TestCase):
         self.assertEqual("monkey", validator("monkey"))
         
         self.assertRaises(TypeError, validator, 1.0)
-
-    
-class TestSchema(unittest.TestCase):
-    def xtest(self):
-        validate = is_type([
-                {
-                    "name": is_type(str) & passes(len),
-                    "age": cast(int) & passes(lambda n: 18 <= n <= 99),
-                    "sex": optional & cast(str.lower) & passes(lambda s: s in ["male", "female"])
-                    }
-                ])
-        data = [{'name': 'Sue', 'age': '28', 'sex': 'FEMALE'},
-                {'name': 'Sam', 'age': '42'},
-                {'name': 'Sacha', 'age': '20', 'sex': 'Male'}]
-        
-        self.assertEqual(
-            [{'name': 'Sue', 'age': 28, 'sex': 'female'},
-             {'name': 'Sam', 'age': 42},
-             {'name': 'Sacha', 'age': 20, 'sex': 'male'}],
-            validate(data))
 
 
 
